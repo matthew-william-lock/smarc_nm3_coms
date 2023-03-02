@@ -1,0 +1,16 @@
+<launch>
+
+    <!-- Load parameters -->
+    <arg name="driver_port" default="$(optenv NANOMODEM_PORT /dev/ttyUSB0)" />
+    <arg name="driver_baud" default="$(optenv NANOMODEM_BAUD 9600)" />
+
+    <!-- Load labust nanomodem driver -->
+    <node pkg="labust_nanomodem" type="nanomodem_node" name="nanomodem" output="screen">
+        <rosparam command="load" file="$(find labust_nanomodem)/config/config.yaml" />
+        <param name="port_name" value="$(arg driver_port)"/>
+        <param name="baud" value="$(arg driver_baud)"/>
+        <param name="working_range" value="1000"/>
+        <param name="sound_speed" value="1500"/>
+    </node>
+
+</launch>
