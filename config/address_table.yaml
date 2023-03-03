@@ -1,0 +1,13 @@
+
+# If the modem address is not currently set to the below defined value, it will be changed when when launching comms_node 
+modem_address: 111
+modem_name: sam
+
+# Add the address of any node in the network below in the example format
+# Example format:
+# <name> : <nm3 modem address>
+#
+# <name> : name of the node given by string
+# <nm3 modem address> : address assigned to the nm3 modem (range 0 - 256)
+
+base_station: 123

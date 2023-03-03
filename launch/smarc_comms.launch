@@ -1,6 +1,6 @@
 <launch>
 
-    <!-- Load parameters -->
+    <!-- Load parameters  -->
     <arg name="driver_port" default="$(optenv NANOMODEM_PORT /dev/ttyUSB0)" />
     <arg name="driver_baud" default="$(optenv NANOMODEM_BAUD 9600)" />
 

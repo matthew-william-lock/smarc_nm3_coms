@@ -1,0 +1,14 @@
+# This file contains the mapping of where messages transmitted over the network will be republished. 
+# When a message is recieved over the accoustic channel, it will have an attached message id. 
+# This message id is mapped to a topic list as defined below and will be republished on that topic, 
+# with the prefix given by the name of the accoustic node that originally published the message. For example;
+
+# A message recieved by 'node1' with a message id mapped to 'example_topic' will be republished to:
+# node1/example_topic
+
+# Add the mappings of message ids to topic names using the following example format:
+#
+# <topic_id> : <topic_name>
+#
+# <topic_id> : id of the topic(range 0 - 256)
+# <topic_name> : name that the message will be republished over
