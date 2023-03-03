@@ -13,4 +13,10 @@
         <param name="sound_speed" value="1500"/>
     </node>
 
+    <!--Launch smarc_comms -->
+    <node pkg="smarc_nm3_coms" type="comms_node" name="smarc_comms" output="screen">
+        <rosparam command="load" file="$(find smarc_nm3_coms)/config/address_table.yaml" />
+        <rosparam command="load" file="$(find smarc_nm3_coms)/config/topic_mapping.yaml" />
+    </node>
+
 </launch>
