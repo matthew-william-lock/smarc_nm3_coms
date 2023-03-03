@@ -14,7 +14,7 @@
     </node>
 
     <!--Launch smarc_comms -->
-    <node pkg="smarc_nm3_coms" type="comms_node" name="smarc_comms" output="screen">
+    <node pkg="smarc_nm3_coms" type="smarc_nm3_coms_node" name="smarc_nm3_coms_node" output="screen">
         <rosparam command="load" file="$(find smarc_nm3_coms)/config/address_table.yaml" />
         <rosparam command="load" file="$(find smarc_nm3_coms)/config/topic_mapping.yaml" />
     </node>
