@@ -168,6 +168,10 @@ add_executable(dccl_talker src/dccl_talker.cpp)
 target_link_libraries(dccl_talker ${catkin_LIBRARIES})  # Remove dccl and Protobuf
 target_link_libraries(dccl_talker dccl proto)  # Link non-ament dependencies
 
+add_executable(dccl_listener src/dccl_listener.cpp)
+target_link_libraries(dccl_listener ${catkin_LIBRARIES})  # Remove dccl and Protobuf
+target_link_libraries(dccl_listener dccl proto)  # Link non-ament dependencies
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use

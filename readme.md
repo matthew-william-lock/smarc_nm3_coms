@@ -20,10 +20,22 @@ sudo apt install libdccl4-dev dccl4-compiler dccl4-apps
 
 ## Usage
 
+### Talker and Listener Example
+
 Running example talker and listener:
 
 1. On sender:
 
 ```bash
-roslaunch smarc_nm3_coms dccl_talker.launch
+roslaunch smarc_nm3_coms dccl_talker.launch driver_port:=/dev/ttyUSB0
 ```
+
+Be sure that ```driver_port``` is set to the correct port.
+
+2. On receiver:
+
+```bash
+roslaunch smarc_nm3_coms dccl_listener.launch driver_port:=/dev/ttyUSB3
+```
+
+Again, be sure that ```driver_port``` is set to the correct port for the receivng modem.
