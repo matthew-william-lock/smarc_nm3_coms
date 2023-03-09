@@ -14,12 +14,28 @@
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "talker");
-    ros::NodeHandle n;
+    ros::NodeHandle n("~");
+    ros::NodeHandle nh;
 
-    ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
-    ros::Publisher nanomodem_pub = n.advertise<labust_msgs::NanomodemRequest>("nanomodem_request", 1000);
+    ros::Publisher chatter_pub = nh.advertise<std_msgs::String>("chatter", 1000);
+    ros::Publisher nanomodem_pub = nh.advertise<labust_msgs::NanomodemRequest>("nanomodem_request", 1000);
 
     ros::Rate loop_rate(0.5);
+
+    // Params
+    int listener_id;
+
+    // Get the listener ID
+    if (n.param<int>("listener_address", listener_id, 0))
+    {
+        // print the value of the parameter
+        ROS_INFO("Got param: %d", listener_id);
+    }
+    else
+    {
+        ROS_ERROR("Failed to get param 'listener_address'");
+        return 1;
+    }
 
     int count = 0;
     while (ros::ok())
@@ -57,7 +73,7 @@ int main(int argc, char **argv)
             ROS_INFO("Publishing %s", message.data.c_str());
             chatter_pub.publish(message);
 
-            // Convert message to uint8[] 
+            // Convert message to uint8[]
             std::vector<uint8_t> myVector(message.data.begin(), message.data.end());
 
             // Publish the nanomodem request
@@ -65,7 +81,7 @@ int main(int argc, char **argv)
             request.header.stamp = ros::Time::now();
             request.req_type = labust_msgs::NanomodemRequest::UNICST;
             request.msg = myVector;
-            request.id = 111;
+            request.id = listener_id;
             nanomodem_pub.publish(request);
         }
 

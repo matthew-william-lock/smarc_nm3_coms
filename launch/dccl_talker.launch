@@ -4,8 +4,12 @@
     <arg name="driver_port" default="$(optenv NANOMODEM_PORT /dev/ttyUSB0)" />
     <arg name="driver_baud" default="$(optenv NANOMODEM_BAUD 9600)" />
 
+    <!-- Modem parameters -->
+    <arg name="talker_namespace" default="talker" />
+    <arg name="listener_address" default="111"/>
+
     <!-- Load labust nanomodem driver -->
-    <node pkg="labust_nanomodem" type="nanomodem_node" name="nanomodem" output="screen">
+    <node pkg="labust_nanomodem" type="nanomodem_node" name="nanomodem" output="screen" ns="$(arg talker_namespace)">
         <rosparam command="load" file="$(find labust_nanomodem)/config/config.yaml" />
         <param name="port_name" value="$(arg driver_port)"/>
         <param name="baud" value="$(arg driver_baud)"/>
@@ -14,7 +18,8 @@
     </node>
 
     <!--Launch smarc_comms -->
-    <node pkg="smarc_nm3_coms" type="dccl_talker" name="dccl_talker" output="screen">
+    <node pkg="smarc_nm3_coms" type="dccl_talker" name="dccl_talker" output="screen" ns="$(arg talker_namespace)">
+        <param name="listener_address" value="$(arg listener_address)"/>
     </node>
 
 </launch>
