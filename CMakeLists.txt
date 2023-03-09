@@ -11,8 +11,33 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-  labust_nanomodem
 )
+
+# Package specific dependencies
+find_package(labust_nanomodem REQUIRED)
+find_package(dccl REQUIRED)
+message(STATUS "Using DCCL in ${DCCL_DIR}")
+find_package(Protobuf REQUIRED)
+
+if(NOT DEFINED DCCL_INCLUDE_DIR)
+  #for DCCL 3.0.3 and newer
+  get_target_property(DCCL_INCLUDE_DIR dccl INTERFACE_INCLUDE_DIRECTORIES)
+endif()
+
+if(DCCL_INCLUDE_DIR)
+  message(STATUS "\tIncluding DCCL protobuf dir: ${DCCL_INCLUDE_DIR}")
+  include_directories("${DCCL_INCLUDE_DIR}")
+  #protobuf_include_dirs("${DCCL_INCLUDE_DIR}")
+endif()
+
+# build the protobuf messages
+file(GLOB ProtoFiles "${CMAKE_CURRENT_SOURCE_DIR}/proto/*.proto")
+PROTOBUF_GENERATE_CPP(ProtoSources ProtoHeaders ${ProtoFiles})
+add_library(proto STATIC ${ProtoSources} ${ProtoHeaders})
+target_link_libraries(proto ${PROTOBUF_LIBRARY})
+
+message( STATUS ${CMAKE_BINARY_DIR} )
+include_directories( ${CMAKE_BINARY_DIR} )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -136,7 +161,11 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cpp)
 target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_node dccl proto)
 
+add_executable(dccl_talker src/dccl_talker.cpp)
+target_link_libraries(dccl_talker ${catkin_LIBRARIES})  # Remove dccl and Protobuf
+target_link_libraries(dccl_talker dccl proto)  # Link non-ament dependencies
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
