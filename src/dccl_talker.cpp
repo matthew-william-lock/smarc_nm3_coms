@@ -6,59 +6,74 @@
 #include "dccl.h"
 #include "navreport.pb.h"
 
+#include <labust_msgs/NanomodemRequest.h>
+
 /**
  * This tutorial demonstrates simple sending of messages over the ROS system.
  */
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "talker");
-  ros::NodeHandle n;
-  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
-  ros::Rate loop_rate(10);
+    ros::init(argc, argv, "talker");
+    ros::NodeHandle n;
 
-  int count = 0;
-  while (ros::ok())
-  {
+    ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+    ros::Publisher nanomodem_pub = n.advertise<labust_msgs::NanomodemRequest>("nanomodem_request", 1000);
 
-    // Publish a message
-    std_msgs::String msg;
-    std::stringstream ss;
-    ss << "hello world " << count;
-    msg.data = ss.str();
-    ROS_INFO("%s", msg.data.c_str());
-    chatter_pub.publish(msg);
+    ros::Rate loop_rate(0.5);
 
-    // DCCL Message
+    int count = 0;
+    while (ros::ok())
     {
 
-        auto message = std_msgs::String();
-        std::string encoded_bytes;
-        dccl::Codec codec;
+        // Publish a message
+        std_msgs::String msg;
+        std::stringstream ss;
+        ss << "hello world " << count;
+        msg.data = ss.str();
+        ROS_INFO("%s", msg.data.c_str());
+        chatter_pub.publish(msg);
 
-        // Create the DCCL-encoded protobuf message
-        codec.load<NavigationReport>();
+        // DCCL Message
+        {
 
-        NavigationReport report;
-        report.set_x( 0 );
-        report.set_y( 0 );
-        report.set_z( -999 );
-        //report.set_veh_class( testdccl::NavigationReport::AUV );
-        report.set_battery_ok( true );
+            auto message = std_msgs::String();
+            std::string encoded_bytes;
+            dccl::Codec codec;
 
-        codec.encode( &encoded_bytes, report );
+            // Create the DCCL-encoded protobuf message
+            codec.load<NavigationReport>();
 
-        // Serialize the protobuf data
-        message.data = encoded_bytes;
-        ROS_INFO("Publishing %s", message.data.c_str());
-        chatter_pub.publish(message);
+            NavigationReport report;
+            report.set_x(0);
+            report.set_y(0);
+            report.set_z(-999);
+            // report.set_veh_class( testdccl::NavigationReport::AUV );
+            report.set_battery_ok(true);
+
+            codec.encode(&encoded_bytes, report);
+
+            // Serialize the protobuf data
+            message.data = encoded_bytes;
+            ROS_INFO("Publishing %s", message.data.c_str());
+            chatter_pub.publish(message);
+
+            // Convert message to uint8[] 
+            std::vector<uint8_t> myVector(message.data.begin(), message.data.end());
+
+            // Publish the nanomodem request
+            labust_msgs::NanomodemRequest request;
+            request.header.stamp = ros::Time::now();
+            request.req_type = labust_msgs::NanomodemRequest::UNICST;
+            request.msg = myVector;
+            request.id = 111;
+            nanomodem_pub.publish(request);
+        }
+
+        ros::spinOnce();
+
+        loop_rate.sleep();
+        ++count;
     }
 
-
-    ros::spinOnce();
-
-    loop_rate.sleep();
-    ++count;
-  }
-
-  return 0;
+    return 0;
 }
