@@ -17,3 +17,13 @@ sudo apt install libdccl4-dev
 # full
 sudo apt install libdccl4-dev dccl4-compiler dccl4-apps
 ```
+
+## Usage
+
+Running example talker and listener:
+
+1. On sender:
+
+```bash
+roslaunch smarc_nm3_coms dccl_talker.launch
+```
