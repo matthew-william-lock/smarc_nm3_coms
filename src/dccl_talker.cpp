@@ -65,8 +65,8 @@ int main(int argc, char **argv)
             report.set_z(-999);
             // report.set_veh_class( testdccl::NavigationReport::AUV );
             report.set_battery_ok(true);
-
             codec.encode(&encoded_bytes, report);
+            ROS_INFO("Encoded message: %s", report.ShortDebugString().c_str());
 
             // Serialize the protobuf data
             message.data = encoded_bytes;
